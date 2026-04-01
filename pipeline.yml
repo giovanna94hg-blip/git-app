@@ -1,0 +1,23 @@
+name: Deploy App 🚀
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build Docker
+        run: docker build -t mi-app .
+
+      - name: Login Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
+
+      - name: Push image
+        run: |
+          docker tag mi-app ${{ secrets.DOCKER_USER }}/mi-app:latest
+          docker push ${{ secrets.DOCKER_USER }}/mi-app:latest
